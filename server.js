@@ -15,7 +15,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://gsparsh17:Gsparsh17@tasks.wfyav.mongodb.net/?retryWrites=true&w=majority&appName=Tasks', { useNewUrlParser: true, useUnifiedTopology: true,
+mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true, useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
   socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
 })
