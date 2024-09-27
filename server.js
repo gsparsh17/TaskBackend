@@ -11,13 +11,29 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = "jwt";
 
 // Middleware
-app.use(cors());
+const allowedOrigins = ['http://localhost:3000', 'https://your-frontend-domain.com']; // Add your frontend domain here
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin like mobile apps or curl requests
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true, // Allow credentials like cookies, authorization headers, or TLS client certificates
+}));
+
 app.use(bodyParser.json());
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true, useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+mongoose.connect(process.env.MONGOURL, { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000, 
+  socketTimeoutMS: 45000, 
 })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
@@ -57,6 +73,7 @@ app.delete('/tasks/:id', async (req, res) => {
   res.status(204).send();
 });
 
+// User Schema
 const userSchema = new mongoose.Schema({
   username: String,
   email: String,
@@ -99,16 +116,15 @@ app.post('/login', async (req, res) => {
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.error(error); 
     res.status(500).json({ error: 'Error logging in' });
   }
 });
 
-
 // Protected route example
 app.get('/protected', (req, res) => {
   const token = req.headers['authorization'];
-  
+
   if (!token) {
     return res.status(401).json({ message: 'Token required' });
   }
