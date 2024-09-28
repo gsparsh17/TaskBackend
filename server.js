@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = "jwt";
 
 // Middleware
-const allowedOrigins = ['http://localhost:3000', 'https://your-frontend-domain.com']; // Add your frontend domain here
+const allowedOrigins = ['http://localhost:3000', 'https://kanban-manager-three.vercel.app']; // Add your frontend domain here
 
 app.use(cors({
   origin: function (origin, callback) {
