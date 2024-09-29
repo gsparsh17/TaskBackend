@@ -11,11 +11,11 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = "jwt";
 
 // Middleware
-const allowedOrigins = ['http://localhost:3000', 'https://kanban-manager-three.vercel.app']; // Add your frontend domain here
+const allowedOrigins = ['http://localhost:3000', 'https://kanban-manager-three.vercel.app'];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin like mobile apps or curl requests
+    // Allow requests with no origin, such as mobile apps or curl
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
@@ -23,8 +23,12 @@ app.use(cors({
     }
     return callback(null, true);
   },
-  credentials: true, // Allow credentials like cookies, authorization headers, or TLS client certificates
+  credentials: true, // Allow credentials (Authorization header, cookies, etc.)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
 }));
+
+app.options('*', cors());  // Allow preflight requests for all routes
 
 app.use(bodyParser.json());
 
